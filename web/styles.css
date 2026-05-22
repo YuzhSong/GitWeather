@@ -1,0 +1,424 @@
+@import url("https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap");
+
+:root {
+  color: #f8f4e8;
+  background: #12131a;
+  font-family: "ZCOOL XiaoWei", "Microsoft YaHei", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 42px;
+  transition: background 500ms ease;
+}
+
+.app-shell::before,
+.app-shell::after {
+  position: fixed;
+  content: "";
+  pointer-events: none;
+  border-radius: 999px;
+  filter: blur(8px);
+  opacity: 0.65;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+.app-shell::before {
+  width: 430px;
+  height: 430px;
+  top: -120px;
+  right: -80px;
+  background: rgba(255, 219, 130, 0.28);
+}
+
+.app-shell::after {
+  width: 320px;
+  height: 320px;
+  left: -80px;
+  bottom: 8%;
+  background: rgba(95, 182, 255, 0.2);
+  animation-delay: -6s;
+}
+
+.clear,
+.sunny {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(255, 212, 113, 0.45), transparent 30%),
+    linear-gradient(135deg, #123c55 0%, #2d6f73 45%, #d28b4a 100%);
+}
+
+.rain {
+  background:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.08) 0 2px, transparent 2px 24px),
+    linear-gradient(135deg, #15243e 0%, #315073 52%, #6d7d86 100%);
+}
+
+.storm {
+  background:
+    radial-gradient(circle at 72% 18%, rgba(255, 235, 130, 0.42), transparent 8%),
+    linear-gradient(135deg, #10131f 0%, #29324b 48%, #656068 100%);
+}
+
+.cloudy,
+.fog {
+  background:
+    radial-gradient(circle at 22% 26%, rgba(255, 255, 255, 0.2), transparent 24%),
+    linear-gradient(135deg, #2f3b44 0%, #627179 48%, #a59a83 100%);
+}
+
+.hero {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 28px;
+  align-items: end;
+  max-width: 1180px;
+  margin: 0 auto 28px;
+}
+
+.hero-copy h1 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 7.8rem);
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+}
+
+.lede {
+  max-width: 720px;
+  margin: 24px 0 0;
+  color: rgba(255, 250, 235, 0.78);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+  color: rgba(255, 250, 235, 0.62);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.glass {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 34px;
+  background: rgba(14, 17, 24, 0.42);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(22px);
+}
+
+.path-card {
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+}
+
+.path-card label {
+  display: block;
+  margin-bottom: 10px;
+  color: rgba(255, 250, 235, 0.74);
+}
+
+.path-row {
+  display: flex;
+  gap: 10px;
+}
+
+.path-row input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  padding: 14px 16px;
+  color: #fff8df;
+  background: rgba(10, 13, 18, 0.56);
+  outline: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.path-row button {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 18px;
+  padding: 0 20px;
+  color: #1a1610;
+  background: #ffd36f;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(255, 197, 84, 0.24);
+}
+
+.path-row button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.hint,
+.error,
+.muted {
+  margin: 12px 0 0;
+  color: rgba(255, 250, 235, 0.62);
+}
+
+.error {
+  color: #ffd0c4;
+}
+
+.dashboard {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.weather-card,
+.score-card,
+.stats-card,
+.branch-card,
+.commit-card {
+  padding: 28px;
+}
+
+.weather-card {
+  min-height: 440px;
+}
+
+.weather-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.weather-card h2 {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 6.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.08em;
+}
+
+.branch-pill {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: rgba(255, 250, 235, 0.78);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.headline {
+  max-width: 640px;
+  margin: 24px 0;
+  color: rgba(255, 250, 235, 0.82);
+  font-size: 1.25rem;
+  line-height: 1.7;
+}
+
+.weather-grid,
+.stat-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.metric,
+.stat {
+  min-height: 112px;
+  border-radius: 24px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.metric span,
+.stat span {
+  display: block;
+  color: rgba(255, 250, 235, 0.58);
+  font-size: 0.9rem;
+}
+
+.metric strong,
+.stat strong {
+  display: block;
+  margin-top: 14px;
+  font-size: 1.6rem;
+}
+
+.stat small {
+  display: block;
+  margin-top: 8px;
+  color: rgba(255, 250, 235, 0.52);
+}
+
+.advice {
+  margin-top: 20px;
+  border-left: 3px solid #ffd36f;
+  padding: 2px 0 2px 18px;
+}
+
+.advice span {
+  color: #ffd36f;
+}
+
+.advice p {
+  margin: 8px 0 0;
+  color: rgba(255, 250, 235, 0.82);
+  line-height: 1.7;
+}
+
+.score-card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.gauge {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  text-align: center;
+  color: rgba(255, 250, 235, 0.7);
+}
+
+.gauge-ring {
+  display: grid;
+  width: 128px;
+  height: 128px;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(12, 14, 20, 0.9) 56%, transparent 57%),
+    conic-gradient(var(--gauge-color) var(--value, 0%), rgba(255, 255, 255, 0.14) 0);
+}
+
+.gauge-ring strong {
+  font-size: 1.4rem;
+}
+
+.gauge.hot {
+  --gauge-color: #ffd36f;
+}
+
+.gauge.storm {
+  --gauge-color: #ff8a78;
+}
+
+.gauge.calm {
+  --gauge-color: #91f0c2;
+}
+
+.stats-card h3,
+.branch-card h3,
+.commit-card h3 {
+  margin: 0 0 18px;
+  font-size: 1.6rem;
+}
+
+.branch-list,
+.commit-list {
+  display: grid;
+  gap: 12px;
+}
+
+.branch-persona,
+.commit-item {
+  display: grid;
+  gap: 6px;
+  border-radius: 20px;
+  padding: 15px 16px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.branch-persona span,
+.commit-item span,
+.last-commit {
+  color: rgba(255, 250, 235, 0.64);
+}
+
+.commit-item {
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+}
+
+.commit-item code {
+  color: #ffd36f;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(-44px, 34px, 0) scale(1.08);
+  }
+}
+
+@media (max-width: 920px) {
+  .app-shell {
+    padding: 24px;
+  }
+
+  .hero,
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-grid,
+  .stat-list,
+  .score-card {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .app-shell {
+    padding: 18px;
+  }
+
+  .path-row,
+  .weather-top {
+    flex-direction: column;
+  }
+
+  .path-row button {
+    width: 100%;
+    min-height: 52px;
+  }
+
+  .weather-grid,
+  .stat-list,
+  .score-card {
+    grid-template-columns: 1fr;
+  }
+
+  .commit-item {
+    grid-template-columns: 1fr;
+  }
+}
