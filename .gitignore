@@ -5,3 +5,4 @@ dist
 npm-debug.log*
 vite-dev.log
 .tmp
+.idea/
