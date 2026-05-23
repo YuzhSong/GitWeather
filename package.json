@@ -2,6 +2,7 @@
   "name": "gitweather",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "description": "A playful developer dashboard that turns Git activity into daily coding weather, mood, and productivity insights.",
   "scripts": {
