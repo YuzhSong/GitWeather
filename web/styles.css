@@ -59,30 +59,51 @@ input {
   animation-delay: -6s;
 }
 
-.clear,
-.sunny {
+.app-shell.clear,
+.app-shell.sunny {
   background:
     radial-gradient(circle at 82% 12%, rgba(255, 212, 113, 0.45), transparent 30%),
     linear-gradient(135deg, #123c55 0%, #2d6f73 45%, #d28b4a 100%);
 }
 
-.rain {
+.app-shell.breeze {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(174, 238, 179, 0.36), transparent 26%),
+    linear-gradient(135deg, #153c4a 0%, #32766e 46%, #c4a15a 100%);
+}
+
+.app-shell.rain {
   background:
     repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.08) 0 2px, transparent 2px 24px),
     linear-gradient(135deg, #15243e 0%, #315073 52%, #6d7d86 100%);
 }
 
-.storm {
+.app-shell.shower {
+  background:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.1) 0 2px, transparent 2px 30px),
+    radial-gradient(circle at 78% 18%, rgba(255, 214, 121, 0.32), transparent 18%),
+    linear-gradient(135deg, #17304b 0%, #396277 52%, #87906f 100%);
+}
+
+.app-shell.storm {
   background:
     radial-gradient(circle at 72% 18%, rgba(255, 235, 130, 0.42), transparent 8%),
     linear-gradient(135deg, #10131f 0%, #29324b 48%, #656068 100%);
 }
 
-.cloudy,
-.fog {
+.app-shell.cloudy,
+.app-shell.fog,
+.app-shell.overcast,
+.app-shell.haze {
   background:
     radial-gradient(circle at 22% 26%, rgba(255, 255, 255, 0.2), transparent 24%),
     linear-gradient(135deg, #2f3b44 0%, #627179 48%, #a59a83 100%);
+}
+
+.app-shell.haze {
+  background:
+    radial-gradient(circle at 20% 24%, rgba(255, 255, 255, 0.18), transparent 28%),
+    linear-gradient(135deg, #263d45 0%, #6b786d 48%, #b38f70 100%);
 }
 
 .hero {

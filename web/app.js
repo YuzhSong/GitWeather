@@ -27,7 +27,7 @@ const renderBranches = (branches) => {
     return;
   }
 
-  for (const branch of branches) {
+  for (const branch of branches.slice(0, 4)) {
     const item = document.createElement("div");
     item.className = "branch-persona";
     item.innerHTML = `<strong></strong><span></span>`;
@@ -68,7 +68,7 @@ const renderForecast = (forecast) => {
   setText("#weather-title", forecast.weather.title);
   setText("#current-branch", forecast.currentBranch || "detached");
   setText("#weather-headline", forecast.weather.headline);
-  setText("#code-temperature", `${metrics.codeTemperature}℃`);
+  setText("#code-temperature", `${metrics.codeTemperature}°C`);
   setText("#commit-humidity", `${metrics.commitHumidity}%`);
   setText("#bug-wind", `${metrics.bugWind} m/s`);
   setText("#comfort", getComfort(metrics));
