@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+﻿import { execFile } from "node:child_process";
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -145,17 +145,18 @@ const getBranchPersona = (branch) => {
   const clean = branch.replace(/^\*\s*/, "").trim();
   const lower = clean.toLowerCase();
 
-  if (lower === "main" || lower === "master") return "稳重老父亲，保守但可靠";
-  if (lower.includes("dev") || lower.includes("develop")) return "熬夜大学生，什么都敢合";
-  if (lower.includes("ui") || lower.includes("style")) return "审美型人格，天天调颜色";
-  if (lower.includes("bug") || lower.includes("fix")) return "外科医生，专门缝补语法伤口";
-  if (lower.includes("feature") || lower.includes("feat")) return "探险家，背包里全是新想法";
-  if (lower.includes("hotfix")) return "消防员，警报一响立刻出动";
-  if (lower.includes("refactor")) return "整理癖建筑师，拆墙也要先画图";
-  return "神秘支线，可能藏着一只还没命名的灵感怪";
+  if (lower === "main" || lower === "master") return "Main branch";
+  if (lower.includes("dev") || lower.includes("develop")) return "Development branch";
+  if (lower.includes("ui") || lower.includes("style")) return "UI branch";
+  if (lower.includes("bug") || lower.includes("fix")) return "Bugfix branch";
+  if (lower.includes("feature") || lower.includes("feat")) return "Feature branch";
+  if (lower.includes("hotfix")) return "Hotfix branch";
+  if (lower.includes("refactor")) return "Refactor branch";
+  return "Active branch";
 };
 
 const scoreMood = ({ commits, additions, deletions, todos, mergeCount, stressMessages, hoursSinceLastCommit }) => {
+  // Legacy fallback kept for compatibility; active logic uses scoreMoodV2.
   let productivity = Math.min(100, commits.length * 14 + additions / 18 + deletions / 35 + 18);
   let pressure = todos * 2.4 + stressMessages * 12 + mergeCount * 8 + Math.max(0, deletions - additions) / 30;
 
@@ -166,81 +167,43 @@ const scoreMood = ({ commits, additions, deletions, todos, mergeCount, stressMes
   pressure = Math.max(0, Math.min(100, Math.round(pressure)));
   const stability = Math.max(0, Math.min(100, Math.round(100 - pressure - mergeCount * 3 + commits.length * 2)));
 
-  let weather = {
-    type: "sunny",
-    emoji: "☀️",
-    title: "晴朗",
-    headline: "开发气压稳定，适合继续推进新功能",
-    gradient: "sunny",
-  };
-
-  if (hoursSinceLastCommit > 168) {
-    weather = {
-      type: "fog",
-      emoji: "🌫️",
-      title: "雾天",
-      headline: "项目能见度下降，建议先做一次小型整理提交",
-      gradient: "fog",
-    };
-  } else if (pressure >= 70) {
-    weather = {
-      type: "storm",
-      emoji: "⛈️",
-      title: "雷暴",
-      headline: "Debug 压力较大，当前分支存在不稳定气流",
-      gradient: "storm",
-    };
-  } else if (pressure >= 42) {
-    weather = {
-      type: "rain",
-      emoji: "🌧️",
-      title: "阵雨",
-      headline: "代码湿度偏高，适合修小 bug、补测试和写注释",
-      gradient: "rain",
-    };
-  } else if (productivity < 40) {
-    weather = {
+  return {
+    productivity,
+    pressure,
+    stability,
+    weather: {
       type: "cloudy",
       emoji: "☁️",
-      title: "多云",
-      headline: "代码活跃度略低，适合做一次轻量整理",
+      title: "Cloudy",
+      headline: "Legacy weather state.",
       gradient: "cloudy",
-    };
-  } else if (productivity >= 82 && pressure < 35) {
-    weather = {
-      type: "clear",
-      emoji: "🌤️",
-      title: "晴间多云",
-      headline: "生产力指数优秀，适合继续开发新功能",
-      gradient: "clear",
-    };
-  }
-
-  return { productivity, pressure, stability, weather };
+    },
+  };
 };
 
 const getSuggestion = ({ productivity, pressure, todos, hoursSinceLastCommit }) => {
-  if (hoursSinceLastCommit > 168) return "先提交一个小而清晰的整理 commit，让项目重新进入可观测状态。";
-  if (pressure >= 70) return "不建议大规模重构。先喝水，跑测试，挑一个最小 bug 拆掉。";
-  if (todos > 12) return "TODO 云层有点厚，适合清理注释债和补 README。";
-  if (productivity >= 82) return "天气窗口很好，可以推进一个边界清晰的新功能。";
-  return "适合稳步开发：小步提交、及时记录上下文，别让灵感跑丢。";
+  // Legacy fallback kept for compatibility; active logic uses getSuggestionV2.
+  if (hoursSinceLastCommit > 168) return "Resume with a small cleanup commit.";
+  if (pressure >= 70) return "Stabilize first, then expand changes.";
+  if (todos > 12) return "Trim nearby TODOs before adding more surface area.";
+  if (productivity >= 82) return "Good momentum, keep commits focused.";
+  return "Proceed with small, traceable commits.";
 };
 
 const getBranchPersonaV2 = (branch) => {
   const lower = branch.replace(/^\*\s*/, "").trim().toLowerCase();
 
-  if (lower === "main" || lower === "master") return "主干守门员，最近改动优先看稳定性";
-  if (lower.includes("dev") || lower.includes("develop")) return "开发集散地，适合合并前做一次整理";
-  if (lower.includes("ui") || lower.includes("style")) return "界面调色盘，注意交互细节和视觉一致性";
-  if (lower.includes("bug") || lower.includes("fix")) return "修复现场，建议补一条复现或回归测试";
-  if (lower.includes("feature") || lower.includes("feat")) return "功能推进线，适合拆小提交保留上下文";
-  if (lower.includes("hotfix")) return "紧急通道，先止血再回补说明和测试";
-  if (lower.includes("refactor")) return "结构整理线，改完记得跑一次关键路径";
-  return "活跃分支，最近有动静，值得快速扫一眼";
+  if (lower === "main" || lower === "master") return "Mainline, prioritize stability.";
+  if (lower.includes("dev") || lower.includes("develop")) return "Development lane, good place for integration checks.";
+  if (lower.includes("ui") || lower.includes("style")) return "UI lane, watch consistency and interaction details.";
+  if (lower.includes("bug") || lower.includes("fix")) return "Fix lane, pair changes with a quick regression check.";
+  if (lower.includes("feature") || lower.includes("feat")) return "Feature lane, keep commits small and clear.";
+  if (lower.includes("hotfix")) return "Hotfix lane, stabilize first then backfill tests.";
+  if (lower.includes("refactor")) return "Refactor lane, run key path verification.";
+  return "Active lane, recent activity detected.";
 };
 
-const parseActiveBranches = (raw, limit = 3) => {
+const parseActiveBranches = (raw, limit = 4) => {
   const seen = new Set();
   const branches = [];
 
@@ -279,52 +242,52 @@ const scoreMoodV2 = ({ commits, additions, deletions, todos, mergeCount, stressM
 
   let weather = {
     type: "sunny",
-    emoji: "☀️",
-    title: "晴朗",
-    headline: "开发气压稳定，适合继续推进边界清晰的功能。",
+    emoji: "sun",
+    title: "Sunny",
+    headline: "Stable coding pressure; good for scoped feature delivery.",
     gradient: "sunny",
   };
 
   if (hoursSinceLastCommit > 168) {
-    weather = { type: "fog", emoji: "🌫️", title: "大雾", headline: "项目能见度偏低，建议先做一次小整理，让上下文重新清晰。", gradient: "fog" };
+    weather = { type: "fog", emoji: "fog", title: "Fog", headline: "Context visibility is low; do a small cleanup first.", gradient: "fog" };
   } else if (hoursSinceLastCommit > 72) {
-    weather = { type: "overcast", emoji: "☁️", title: "阴天", headline: "最近提交间隔偏长，适合从一个低风险任务重新热身。", gradient: "overcast" };
+    weather = { type: "overcast", emoji: "cloud", title: "Overcast", headline: "Commit gap is long; restart with a low-risk task.", gradient: "overcast" };
   } else if (pressure >= 70) {
-    weather = { type: "storm", emoji: "⛈️", title: "雷暴", headline: "Debug 压力较高，当前分支存在不稳定气流，先收敛问题面。", gradient: "storm" };
+    weather = { type: "storm", emoji: "storm", title: "Storm", headline: "Debug pressure is high; reduce uncertainty before adding scope.", gradient: "storm" };
   } else if (pressure >= 55) {
-    weather = { type: "shower", emoji: "🌦️", title: "阵雨", headline: "代码湿度上升，适合补测试、清小 bug，并控制改动范围。", gradient: "shower" };
+    weather = { type: "shower", emoji: "shower", title: "Shower", headline: "Pressure is rising; focus on tests, small fixes, and scope control.", gradient: "shower" };
   } else if (pressure >= 42) {
-    weather = { type: "rain", emoji: "🌧️", title: "小雨", headline: "代码湿度偏高，适合修小 bug、补注释和整理待办。", gradient: "rain" };
+    weather = { type: "rain", emoji: "rain", title: "Rain", headline: "Moderate pressure; suitable for small fixes and TODO cleanup.", gradient: "rain" };
   } else if (todos > 10) {
-    weather = { type: "haze", emoji: "🌁", title: "薄雾", headline: "TODO 云层有点厚，短时间清理几处会让项目更轻。", gradient: "haze" };
+    weather = { type: "haze", emoji: "haze", title: "Haze", headline: "TODO density is visible; trim nearby items first.", gradient: "haze" };
   } else if (productivity < 40) {
-    weather = { type: "cloudy", emoji: "☁️", title: "多云", headline: "代码活跃度略低，适合做一次轻量整理或小步提交。", gradient: "cloudy" };
+    weather = { type: "cloudy", emoji: "cloud", title: "Cloudy", headline: "Low activity; choose light cleanup or a tiny commit.", gradient: "cloudy" };
   } else if (productivity >= 90 && pressure < 25) {
-    weather = { type: "clear", emoji: "🌤️", title: "晴间多云", headline: "生产力指数很高，压力也低，可以推进一个完整的小功能。", gradient: "clear" };
+    weather = { type: "clear", emoji: "clear", title: "Clear", headline: "High productivity with low pressure; push one complete small feature.", gradient: "clear" };
   } else if (productivity >= 82 && pressure < 35) {
-    weather = { type: "breeze", emoji: "🍃", title: "微风", headline: "节奏不错，适合继续推进，同时保留清晰提交记录。", gradient: "breeze" };
+    weather = { type: "breeze", emoji: "breeze", title: "Breeze", headline: "Good rhythm; continue with clean commit history.", gradient: "breeze" };
   }
 
   return { productivity, pressure, stability, weather };
 };
 
 const getSuggestionV2 = ({ productivity, pressure, todos, hoursSinceLastCommit, mergeCount, stressMessages }) => {
-  if (hoursSinceLastCommit > 168) return "先做一个小而清晰的整理提交，把项目重新带回可观测状态。";
-  if (pressure >= 70 && stressMessages > 0) return "今天不适合大重构。先跑测试，挑一个最小的失败点修掉，再继续扩展。";
-  if (pressure >= 55) return "把改动控制在一个主题里，优先补回归测试和错误处理，避免问题面继续扩大。";
-  if (mergeCount >= 2) return "合并活动偏多，建议先同步主干、确认冲突点，再继续写新代码。";
-  if (todos > 12) return "TODO 云层偏厚，挑三处最靠近当前功能的待办清掉，收益会比较直接。";
-  if (todos > 6) return "待办数量已经可见，新增功能前先处理一两处注释债，避免继续堆积。";
-  if (productivity >= 90 && pressure < 25) return "状态很好，可以推进一个完整的小功能，但提交粒度保持清楚。";
-  if (productivity >= 75) return "适合稳步开发：小步提交，及时记录上下文，把收尾工作留在同一个分支里。";
-  if (productivity < 35) return "先选一个低风险任务热身，例如补 README、跑检查或清理一个小文件。";
-  return "今天适合稳扎稳打：先确认当前目标，再用一到两个小提交推进。";
+  if (hoursSinceLastCommit > 168) return "Start with one small cleanup commit to restore context.";
+  if (pressure >= 70 && stressMessages > 0) return "Avoid broad refactors; fix one failing point first.";
+  if (pressure >= 55) return "Keep one theme per commit and prioritize regression coverage.";
+  if (mergeCount >= 2) return "Merge activity is high; sync mainline and verify conflict points first.";
+  if (todos > 12) return "TODO load is heavy; close 2-3 nearby items before expanding scope.";
+  if (todos > 6) return "TODO count is visible; clear one or two nearby notes first.";
+  if (productivity >= 90 && pressure < 25) return "Momentum is strong; push one complete small feature.";
+  if (productivity >= 75) return "Proceed steadily with small and traceable commits.";
+  if (productivity < 35) return "Warm up with a low-risk task like docs or a minor cleanup.";
+  return "Move in small steps and keep context notes up to date.";
 };
 
 export const analyzeRepository = async (repoPath) => {
   const absolutePath = path.resolve(repoPath);
   const inside = await runGit(absolutePath, ["rev-parse", "--is-inside-work-tree"]);
-  if (inside !== "true") throw new Error("这不是一个 Git 仓库。请选择包含 .git 的项目目录。");
+  if (inside !== "true") throw new Error("Not a Git repository. Please select a project directory containing .git.");
 
   const repoName = path.basename(await runGit(absolutePath, ["rev-parse", "--show-toplevel"]));
   const currentBranch = await runGit(absolutePath, ["branch", "--show-current"]).catch(() => "detached");
@@ -351,10 +314,10 @@ export const analyzeRepository = async (repoPath) => {
   const { todos, scanned } = await countTodos(absolutePath);
   const branches = parseActiveBranches(branchRaw);
 
-  const stressPattern = /\b(fix|bug|error|fail|broken|rollback|revert|conflict|hotfix|崩|炸|错|修复|回滚)\b/i;
+  const stressPattern = /\b(fix|bug|error|fail|broken|rollback|revert|conflict|hotfix|crash)\b/i;
   const mergeCount = commits.filter((commit) => /^merge\b/i.test(commit.message)).length;
   const stressMessages = commits.filter((commit) => stressPattern.test(commit.message)).length;
-  const [lastCommitTimestamp, lastCommitMessage = "暂无提交"] = lastCommitRaw.split("|");
+  const [lastCommitTimestamp, lastCommitMessage = "No commits yet"] = lastCommitRaw.split("|");
   const hoursSinceLastCommit = lastCommitTimestamp
     ? Math.round((Date.now() / 1000 - Number(lastCommitTimestamp)) / 3600)
     : 9999;
@@ -365,7 +328,7 @@ export const analyzeRepository = async (repoPath) => {
     repoPath: absolutePath,
     currentBranch,
     generatedAt: new Date().toISOString(),
-    window: "最近 7 天",
+    window: "Last 7 days",
     weather: mood.weather,
     metrics: {
       productivity: mood.productivity,
