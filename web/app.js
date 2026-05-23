@@ -1,4 +1,4 @@
-﻿const API_BASE = "";
+const API_BASE = "";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -12,10 +12,10 @@ const setGauge = (ringSelector, textSelector, value) => {
 };
 
 const getComfort = (metrics) => {
-  if (metrics.pressure >= 70) return "High pressure";
-  if (metrics.productivity >= 82) return "In the zone";
-  if (metrics.stability >= 72) return "Stable progress";
-  return "Need warm-up";
+  if (metrics.pressure >= 70) return "略崩溃";
+  if (metrics.productivity >= 82) return "手感正热";
+  if (metrics.stability >= 72) return "稳定推进";
+  return "需要热身";
 };
 
 const renderBranches = (branches) => {
@@ -23,7 +23,7 @@ const renderBranches = (branches) => {
   list.innerHTML = "";
 
   if (!branches.length) {
-    list.innerHTML = '<p class="muted">No branch activity data yet.</p>';
+    list.innerHTML = '<p class="muted">还没有分支观测数据。</p>';
     return;
   }
 
@@ -41,10 +41,10 @@ const renderCommits = (forecast) => {
   const list = $("#commit-list");
   list.innerHTML = "";
   const last = forecast.lastCommit;
-  setText("#last-commit", `Last commit: ${last.message}${last.hoursAgo ? ` · ${last.hoursAgo}h ago` : ""}`);
+  setText("#last-commit", `上次提交：${last.message}${last.hoursAgo ? ` · ${last.hoursAgo} 小时前` : ""}`);
 
   if (!forecast.recentCommits.length) {
-    list.innerHTML = '<p class="muted">Recent commits will show up here after analysis.</p>';
+    list.innerHTML = '<p class="muted">生成天气后会显示最近提交。</p>';
     return;
   }
 
@@ -63,7 +63,7 @@ const renderForecast = (forecast) => {
   const shell = $("#app");
   shell.className = `app-shell ${forecast.weather.gradient || "clear"}`;
 
-  setText("#repo-title", `${forecast.repoName} Today`);
+  setText("#repo-title", `${forecast.repoName} 今日天气`);
   setText("#weather-emoji", forecast.weather.emoji);
   setText("#weather-title", forecast.weather.title);
   setText("#current-branch", forecast.currentBranch || "detached");
@@ -79,13 +79,13 @@ const renderForecast = (forecast) => {
   setGauge("#stability-ring", "#stability", metrics.stability);
 
   setText("#commits", metrics.commits);
-  setText("#today-commits", `Today ${metrics.todayCommits}`);
+  setText("#today-commits", `今日 ${metrics.todayCommits}`);
   setText("#lines", `+${metrics.additions} / -${metrics.deletions}`);
-  setText("#files-changed", `${metrics.filesChanged} files`);
+  setText("#files-changed", `${metrics.filesChanged} 个文件`);
   setText("#todos", metrics.todos);
-  setText("#scanned-files", `Scanned ${metrics.scannedFiles || 0} files`);
+  setText("#scanned-files", `扫描 ${metrics.scannedFiles || 0} 个文件`);
   setText("#merges", metrics.mergeCount);
-  setText("#stress", `${metrics.stressMessages} stress messages`);
+  setText("#stress", `${metrics.stressMessages} 条压力消息`);
 
   renderBranches(forecast.branches);
   renderCommits(forecast);
@@ -100,22 +100,22 @@ const analyze = async () => {
   if (!repoPath) return;
 
   button.disabled = true;
-  button.textContent = "Analyzing...";
+  button.textContent = "观测中...";
   message.className = "hint";
-  message.textContent = "Scanning recent Git activity...";
+  message.textContent = "代码气象雷达正在扫描最近 7 天的 Git 云图。";
 
   try {
     const response = await fetch(`${API_BASE}/api/analyze?path=${encodeURIComponent(repoPath)}`);
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Analysis failed");
+    if (!response.ok) throw new Error(data.error || "分析失败");
     renderForecast(data);
-    message.textContent = "Analysis complete. Data stays local.";
+    message.textContent = "观测完成。本地数据没有离开你的电脑。";
   } catch (error) {
     message.className = "error";
     message.textContent = error.message;
   } finally {
     button.disabled = false;
-    button.textContent = "Generate Weather";
+    button.textContent = "生成天气";
   }
 };
 
